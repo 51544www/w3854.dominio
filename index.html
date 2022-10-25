@@ -545,44 +545,50 @@ input, textarea {
 }
 </style>
 <script>
-if (document.addEventListener) {
-    document.addEventListener("keydown", bloquearSource);
-} else { //Versões antigas do IE
-    document.attachEvent("onkeydown", bloquearSource);
-}
+        if (document.addEventListener) {
+            document.addEventListener("contextmenu", function (e) {
+                e.preventDefault();
+                return false;
+            });
 
-function bloquearSource(e) {
-    e = e || window.event;
+            document.addEventListener("keydown", bloquearSource);
+        } else { //Versões antigas do IE
+            document.attachEvent("oncontextmenu", function (e) {
+                e = e || window.event;
+                e.returnValue = false;
+                return false;
+            });
 
-    var code = e.which || e.keyCode;
-
-    if (
-        e.ctrlKey &&
-        (code == 83 || code == 85) //83 = S, 85 = U
-    ) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
+            document.attachEvent("onkeydown", bloquearSource);
         }
 
-        return false;
-    }
-}
-</script>
+        function ctrlShiftKey(e, keyCode) {
+            return e.ctrlKey && e.shiftKey && e.keyCode === keyCode.charCodeAt(0);
+        }
 
-<script>
-if (document.addEventListener) {
-    document.addEventListener("contextmenu", function(e) {
-        e.preventDefault();
-        return false;
-    });
-} else { //Versões antigas do IE
-    document.attachEvent("oncontextmenu", function(e) {
-        e = e || window.event;
-        e.returnValue = false;
-        return false;
-    });
-}
-</script>
+
+        function bloquearSource(e) {
+
+            e = e || window.event;
+
+            var code = e.which || e.keyCode;
+
+            console.log(code)
+
+            if (
+                (e.ctrlKey &&
+                    (code == 83 || code == 85)) || code == 123 || ctrlShiftKey(e, 'I') ||
+                ctrlShiftKey(e, 'J') ||
+                ctrlShiftKey(e, 'C')) //83 = S, 85 = U, 123 = f12
+            {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else {
+                    e.returnValue = false;
+                }
+
+                return false;
+            }
+        }
+    </script>
 </html>
